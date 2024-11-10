@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+
+env:
+  GCC_VERSION: 14
+  SDK_VERSION: 2.0.0
+  TOOLCHAIN_URL: "https://github.com/tttapa/docker-arm-cross-toolchain/releases/latest/download"
+  PICO_SDK_URL: "https://github.com/raspberrypi/pico-sdk"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ubuntu:noble
+    steps:
+      - name: Install dependencies
+        run: >
+          apt-get update && apt-get install -y
+          git cmake build-essential wget python3
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download and install ARM cross-toolchain
+        run: |
+          mkdir -p ~/opt
+          url=${{ env.TOOLCHAIN_URL }}/x-tools-arm-pico-eabi-gcc${{ env.GCC_VERSION }}.tar.xz
+          wget $url -O- | tar xJ -C ~/opt
+
+      - name: Install Pico SDK
+        run: |
+          mkdir -p ~/pico
+          git clone ${{ env.PICO_SDK_URL }} --branch ${{ env.SDK_VERSION }} --recurse-submodules --shallow-submodules ~/pico/pico-sdk
+
+      - name: Configure and build project
+        run: |
+          export PICO_SDK_PATH="$HOME/pico/pico-sdk"
+          cmake -S . -B build --toolchain ~/opt/x-tools/arm-pico-eabi/arm-pico-eabi.toolchain.cmake
+          cmake --build build -j$(nproc)
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pico-cpp-build
+          path: build/hello.uf2
