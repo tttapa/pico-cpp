@@ -1,0 +1,28 @@
+{
+    "version": "0.3.0",
+    "configurations": [
+        {
+            "name": "Pico attach to OpenOCD",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "cwd": "${workspaceFolder}",
+            "miDebuggerServerAddress": "localhost:3333",
+            "useExtendedRemote": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb-multiarch",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

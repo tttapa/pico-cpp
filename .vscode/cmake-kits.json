@@ -1,0 +1,9 @@
+[
+    {
+        "name": "RPi Pico ─ tttapa/arm-pico-eabi",
+        "toolchainFile": "${env:HOME}/opt/x-tools/arm-pico-eabi/arm-pico-eabi.toolchain.cmake",
+        "environmentVariables": {
+            "PICO_SDK_PATH": "${env:HOME}/pico/pico-sdk"
+        }
+    }
+]

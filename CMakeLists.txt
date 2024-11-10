@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.20)
+project(pico-cpp LANGUAGES C CXX ASM)
+if (DEFINED PICO_SDK_VERSION_STRING)
+    pico_sdk_init()
+endif()
+
+add_library(warnings INTERFACE)
+target_compile_options(warnings INTERFACE "-Wall" "-Wextra" "-Wno-psabi")
+
+add_executable(hello "hello.cpp")
+target_compile_features(hello PRIVATE cxx_std_23)
+target_link_libraries(hello PRIVATE warnings pico_stdlib hardware_adc)
+pico_enable_stdio_usb(hello 1)
+pico_enable_stdio_uart(hello 0)
+pico_add_extra_outputs(hello)
